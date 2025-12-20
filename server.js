@@ -25,7 +25,8 @@ const upload = multer({ storage });
 
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
 
 const MONGO_URI =
   'mongodb+srv://vireakboth_db_user:8pTWCCjLYU2Osa5Z@schoolapplicationcluste.exbe9bc.mongodb.net/schoolDB?appName=SchoolApplicationCluster';
