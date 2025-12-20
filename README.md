@@ -1,8 +1,8 @@
 # School Application Project
 
-## Backend
+## Backend  DO NOT CHANGE ANYTHING IN BACKEND OR OTHER FILES IN APP WITHOUT DISCUSSING IN GROUP FIRST(IMPORTANT); MOSTLY JUST TESTING(RUNNING APP) FOR NOW IS OK;  I'LL DIVIDE WORK LATER
 URL:
-https://schoolapplication-backend.onrender.com
+https://schoolapplication-backend.onrender.com   
 
 Health check:
 /health
@@ -25,6 +25,10 @@ mary.w@example.com
 mary.w@example.com
 mary.w@example.com
 password: password123
+
+
+!!!!!!!!!!MUST READ!!!!!!!!!!
+if you change password or email, make sure to change to the original after finishing testing. 
 
 ## How login works
 - Login returns userId + role
