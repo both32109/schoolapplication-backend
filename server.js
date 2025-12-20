@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -28,8 +30,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 
-const MONGO_URI =
-  'mongodb+srv://vireakboth_db_user:8pTWCCjLYU2Osa5Z@schoolapplicationcluste.exbe9bc.mongodb.net/schoolDB?appName=SchoolApplicationCluster';
+const MONGO_URI = process.env.MONGO_URI;
+
+if (!MONGO_URI) {
+  console.error('!!!!MONGO_URI is not defined');
+  process.exit(1);
+}
 
 app.use(cors());
 app.use(bodyParser.json());
