@@ -41,6 +41,15 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads'));
 
+app.get('/', (req, res) => {
+  res.send('School Application Backend is running 🚀');
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
+
 /* =======================
    SCHEMAS
 ======================= */
@@ -845,7 +854,7 @@ mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
     app.listen(PORT, () => {
-      console.log(`🚀 Server running at http://localhost:${PORT}`);
+      console.log(`🚀 Server running on port ${PORT}`);
     });
   })
   .catch(err => {
