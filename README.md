@@ -7,14 +7,24 @@ https://schoolapplication-backend.onrender.com
 Health check:
 /health
 
-## Test Accounts
+## Test Accounts(5 each)
 Teacher:
-email: teacher@test.com
-password: 123456
+email:
+lim@school.com
+cruz@school.com
+tan@school.com
+reyes@school.com
+ortega@school.com
+password: password123
 
 Student:
-email: student@test.com
-password: 123456
+email: 
+john.doe@example.com
+jane.smith@example.com
+mary.w@example.com
+mary.w@example.com
+mary.w@example.com
+password: password123
 
 ## How login works
 - Login returns userId + role
