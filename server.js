@@ -32,6 +32,9 @@ const upload = multer({ storage });
 
 
 const app = express();
+
+app.set('trust proxy', 1);
+
 const PORT = process.env.PORT || 3000;
 
 
@@ -233,7 +236,8 @@ app.post('/users/:id/profile-picture',
   upload.single('file'),
   async (req, res) => {
     const fileUrl =
-      `${req.protocol}://${req.get('host')}/uploads/materials/${req.file.filename}`;
+      `https://${req.get('host')}/uploads/materials/${req.file.filename}`;
+
 
     const { id } = req.params;
     const { role } = req.body;
@@ -253,7 +257,7 @@ app.post('/users/:role/:userId/profile-picture',
 
     const Model = req.params.role === 'TEACHER' ? Teacher : Student;
 
-    const fileUrl = `${req.protocol}://${req.get('host')}/uploads/materials/${req.file.filename}`;
+    const fileUrl = `https://${req.get('host')}/uploads/materials/${req.file.filename}`;
 
     const user = await Model.findByIdAndUpdate(
       req.params.userId,
@@ -527,7 +531,7 @@ app.post(
       }
 
       const fileUrl =
-        `${req.protocol}://${req.get('host')}/uploads/materials/${req.file.filename}`;
+        `https://${req.get('host')}/uploads/materials/${req.file.filename}`;
 
       const material = new Material({
         title: req.body.title,
