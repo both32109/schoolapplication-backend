@@ -1,0 +1,132 @@
+---
+# Ansible Playbook: Setup Node.js Environment
+# This playbook installs Node.js, npm, and starts a mock Node.js service
+# 
+# Usage: ansible-playbook -i inventory setup-node.yml
+
+- name: Setup Node.js and npm on target servers
+  hosts: all
+  become: yes  # Run with sudo privileges
+  
+  tasks:
+    - name: Update package cache (Ubuntu/Debian)
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+      ignore_errors: yes
+
+    - name: Update package cache (RHEL/CentOS)
+      yum:
+        update_cache: yes
+      when: ansible_os_family == "RedHat"
+      ignore_errors: yes
+
+    - name: Install Node.js using NodeSource repository (Ubuntu/Debian)
+      shell: |
+        curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+        apt-get install -y nodejs
+      when: ansible_os_family == "Debian"
+      ignore_errors: yes
+
+    - name: Install Node.js using NodeSource repository (RHEL/CentOS)
+      shell: |
+        curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
+        yum install -y nodejs
+      when: ansible_os_family == "RedHat"
+      ignore_errors: yes
+
+    - name: Verify Node.js installation
+      command: node --version
+      register: node_version
+      changed_when: false
+
+    - name: Verify npm installation
+      command: npm --version
+      register: npm_version
+      changed_when: false
+
+    - name: Display Node.js version
+      debug:
+        msg: "Node.js version: {{ node_version.stdout }}"
+
+    - name: Display npm version
+      debug:
+        msg: "npm version: {{ npm_version.stdout }}"
+
+    - name: Create directory for mock Node.js service
+      file:
+        path: /opt/mock-service
+        state: directory
+        mode: '0755'
+
+    - name: Create mock package.json
+      copy:
+        content: |
+          {
+            "name": "mock-service",
+            "version": "1.0.0",
+            "description": "Mock Node.js service for demonstration",
+            "main": "server.js",
+            "scripts": {
+              "start": "node server.js"
+            }
+          }
+        dest: /opt/mock-service/package.json
+        mode: '0644'
+
+    - name: Create mock server.js
+      copy:
+        content: |
+          const http = require('http');
+          const port = 3000;
+          
+          const server = http.createServer((req, res) => {
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            res.end('Mock Node.js Service Running\n');
+          });
+          
+          server.listen(port, () => {
+            console.log(`Mock service listening on port ${port}`);
+          });
+        dest: /opt/mock-service/server.js
+        mode: '0644'
+
+    - name: Create systemd service file for mock Node.js service
+      copy:
+        content: |
+          [Unit]
+          Description=Mock Node.js Service
+          After=network.target
+          
+          [Service]
+          Type=simple
+          User=root
+          WorkingDirectory=/opt/mock-service
+          ExecStart=/usr/bin/node server.js
+          Restart=always
+          
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/mock-service.service
+        mode: '0644'
+
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start mock Node.js service
+      systemd:
+        name: mock-service
+        enabled: yes
+        state: started
+
+    - name: Verify service is running
+      systemd:
+        name: mock-service
+      register: service_status
+      changed_when: false
+
+    - name: Display service status
+      debug:
+        msg: "Mock Node.js service status: {{ service_status.status.ActiveState }}"
+
