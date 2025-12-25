@@ -1,0 +1,30 @@
+name: School App DevOps Pipeline
+
+on:
+  push:
+    branches: [ "main", "master", "complete_v1" ]
+  pull_request:
+    branches: [ "main", "master", "complete_v1" ]
+
+jobs:
+  devops-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Backend Syntax & Build Test
+        run: |
+          npm install
+          # Check server.js for syntax errors without running it
+          node --check server.js
+
+      - name: Docker Image Build Test
+        run: |
+          # Verify the Dockerfile works
+          docker build -t school-backend-test .

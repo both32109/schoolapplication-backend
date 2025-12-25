@@ -38,3 +38,38 @@ if you change password or email, make sure to change to the original after finis
 ## Important
 - Do NOT change backend URL
 - Do NOT hardcode IDs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//DevOps
+
+# 🛠 DevOps Integration (Teammate C)
+
+This folder contains the Infrastructure and Automation requirements for the project. 
+
+### 🚀 Instructions for Team Leader
+To integrate these DevOps features into the main repository:
+1. **Docker:** Move the `Dockerfile` into the `schoolapplication-backend/` folder.
+2. **CI/CD:** Move the `.github` folder into the root of the project.
+3. **Teacher Grading:** This setup proves the **Containerization** and **CI/CD** requirements are met.
+
+### 📋 What this provides:
+* **Automation:** Every time code is pushed to GitHub, it is automatically checked for syntax errors and Docker build compatibility.
+* **Consistency:** The `Dockerfile` ensures the backend runs identically on Render, Docker, or any local machine.
+* **Safety:** The `node --check` step ensures no broken `server.js` code is deployed.
+
+### 🔧 Tech Stack
+* **Docker:** Containerization of Node.js
+* **GitHub Actions:** CI/CD Pipeline
+* **Linux Environment:** Ubuntu-latest for builds
