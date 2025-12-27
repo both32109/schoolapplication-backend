@@ -4,8 +4,7 @@ FROM node:18
 # 2. Set working directory
 WORKDIR /usr/src/app
 
-# 3. Copy package files from the backend folder
-# Note: This assumes the leader puts this file inside schoolapplication-backend
+# 3. Copy package files from schoolapplication-backend folder
 COPY package*.json ./
 
 # 4. Install dependencies
