@@ -50,7 +50,7 @@ app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads'));
 
 app.get('/', (req, res) => {
-  res.send('School Application Backend is running 🚀');
+  res.send('School Application Backend is running');
 });
 
 app.get('/health', (req, res) => {
@@ -65,7 +65,7 @@ app.get('/health', (req, res) => {
 const teacherSchema = new mongoose.Schema({
   name: String,
   email: { type: String, unique: true },
-  password: String, // HASHED
+  password: String, 
   profilePicture: String
 });
 
@@ -79,7 +79,7 @@ const classroomSchema = new mongoose.Schema({
 const studentSchema = new mongoose.Schema({
   name: String,
   email: { type: String, unique: true },
-  password: String, // HASHED
+  password: String, 
   profilePicture: String,
   classesEnrolled: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Classroom' }]
 });
@@ -104,7 +104,7 @@ const assessmentSchema = new mongoose.Schema(
     maxScore: Number,
     classroomId: { type: mongoose.Schema.Types.ObjectId, ref: 'Classroom' }
   },
-  { timestamps: true } // ⭐ THIS
+  { timestamps: true } 
 );
 
 
@@ -113,7 +113,7 @@ const submissionSchema = new mongoose.Schema(
     studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true },
     assessmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Assessment', required: true },
     submittedAt: { type: Date, default: Date.now },
-    gradedAt: Date, // 👈 ADD THIS
+    gradedAt: Date, 
     writtenAnswer: String,
     comment: String,
     score: Number,
@@ -310,8 +310,6 @@ app.get('/classrooms/:classroomId', async (req, res) => {
     const materials = await Material.find({ classroomId });
     const assessments = await Assessment.find({ classroomId });
 
-    // 👨‍🏫 TEACHER: attach ALL submissions
-    // 👨‍🏫 TEACHER: attach ALL submissions + students
   if (!studentId) {
     const students = await Student.find({
       classesEnrolled: classroomId
@@ -350,13 +348,11 @@ app.get('/classrooms/:classroomId', async (req, res) => {
       ...classroom.toObject(),
       materials,
       assessments: populated,
-      students // ✅ ADD THIS
+      students 
     });
   }
 
 
-
-    // 👨‍🎓 STUDENT (unchanged)
     const populated = await Promise.all(
       assessments.map(async a => {
         const submission = await Submission.findOne({
@@ -420,7 +416,6 @@ app.delete('/classrooms/:classroomId', async (req, res) => {
   try {
     const { classroomId } = req.params;
 
-    // 1. Delete submissions
     const assessments = await Assessment.find({ classroomId });
     const assessmentIds = assessments.map(a => a._id);
 
@@ -428,19 +423,15 @@ app.delete('/classrooms/:classroomId', async (req, res) => {
       assessmentId: { $in: assessmentIds }
     });
 
-    // 2. Delete assessments
     await Assessment.deleteMany({ classroomId });
 
-    // 3. Delete materials
     await Material.deleteMany({ classroomId });
 
-    // 4. Remove class from students
     await Student.updateMany(
       { classesEnrolled: classroomId },
       { $pull: { classesEnrolled: classroomId } }
     );
 
-    // 5. Delete classroom
     await Classroom.findByIdAndDelete(classroomId);
 
     res.status(204).send();
@@ -461,7 +452,6 @@ app.post('/classrooms/:classroomId/students', async (req, res) => {
       return res.status(404).json({ message: 'Student not found' });
     }
 
-    // ✅ FIXED duplicate check
     if (student.classesEnrolled.some(id => id.toString() === classroomId)) {
       return res.status(409).json({ message: 'Student already enrolled' });
     }
@@ -522,10 +512,10 @@ app.post('/classrooms/:classroomId/materials', requireTeacher, async (req, res) 
 
 app.post(
   '/classrooms/:classroomId/materials/upload',
-  upload.single('file'), // ✅ multer FIRST
+  upload.single('file'), 
   async (req, res) => {
     try {
-      // ✅ teacher check AFTER multer
+      // teacher check
       if (req.body.uploaderName !== 'Teacher') {
         return res.status(403).json({ message: 'Only teachers can upload materials' });
       }
@@ -599,7 +589,7 @@ app.get('/classrooms/:classroomId/assessments', async (req, res) => {
 
     const assessments = await Assessment.find({ classroomId });
 
-    // 👨‍🏫 TEACHER VIEW
+    // TEACHER VIEW
     if (role === 'TEACHER') {
       const students = await Student.find({
         classesEnrolled: classroomId
@@ -624,7 +614,7 @@ app.get('/classrooms/:classroomId/assessments', async (req, res) => {
       return res.json(populated);
     }
 
-    // 👨‍🎓 STUDENT VIEW (existing behavior)
+    // STUDENT VIEW
     const populated = await Promise.all(
       assessments.map(async a => {
         const submission = await Submission.findOne({
@@ -861,12 +851,12 @@ app.post('/auth/login', async (req, res) => {
 
 mongoose.connect(MONGO_URI)
   .then(() => {
-    console.log('✅ MongoDB connected');
+    console.log('MongoDB connected');
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`Server running on port ${PORT}`);
     });
   })
   .catch(err => {
-    console.error('❌ MongoDB connection failed', err);
+    console.error('MongoDB connection failed', err);
     process.exit(1);
   });
